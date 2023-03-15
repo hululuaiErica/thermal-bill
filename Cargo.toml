@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "thermal_parser",
+    "thermal_renderer"
+]
