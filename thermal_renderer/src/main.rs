@@ -9,7 +9,9 @@ fn main(){
 
     // 读取命令行参数
     let args: Vec<String> = env::args().collect();
-    let bytes = std::fs::read(args[1].as_str()).unwrap();
+    let target_path = args[1].as_str();
+    let config_path = args[2].as_str();
+    let bytes = std::fs::read(target_path).unwrap();
 
     let vec_bytes:Vec<u8> = bytes.to_vec();
     let mut context = Context::new();
@@ -22,8 +24,8 @@ fn main(){
     let mut command_parser = thermal_parser::new_esc_pos_parser(Box::from(on_new_command));
     command_parser.parse_bytes(&vec_bytes);
 
-    let tesseract_convert = OsCommand::new("tesseract").arg("ori.png").arg("output").arg("-l").arg("chi_sim").output().expect("failed to execute process");
+    let _tesseract_convert = OsCommand::new("tesseract").arg("ori.png").arg("output").arg("-l").arg("chi_sim").output().expect("failed to execute process");
     
-    decode()
+    decode(config_path);
 
 }

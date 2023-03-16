@@ -2,12 +2,12 @@ use encoding::{all::UTF_8, Encoding, DecoderTrap};
 use regex::Regex;
 use crate::json::Setting;
 
-pub fn decode(){
+pub fn decode(config_path:&str){
     let mut rbm: Regex = Regex::new("").unwrap();
     let mut rp: Regex = Regex::new("").unwrap();
     let mut ra: Regex = Regex::new("").unwrap();
     let mut roi: Regex = Regex::new("").unwrap();
-    match std::fs::read("print-assistant.json") {
+    match std::fs::read(config_path) {
         Ok(buf) =>{
             match serde_json::from_slice::<Setting>(&buf[..]) {
                 Ok(setting) => {
@@ -38,7 +38,7 @@ pub fn decode(){
             return 
         }
     }
-
+    
     match UTF_8.decode(&content_buf, DecoderTrap::Replace) {
         Ok(ret) => {
             println!("账单内容:{}", ret);
