@@ -26,7 +26,6 @@ impl Parser {
     }
 
     pub fn parse_bytes(&mut self, bytes: &Vec<u8>){
-        
         self.emit_command(self.cmd_set.begin_parsing.clone());
 
         for byte in bytes {
@@ -72,6 +71,7 @@ impl Parser {
 
         //Keep track of the search in case we need to match for an unknown command
         self.command_buffer.push(*byte);
+
         //Look for matching commands
         let mut new_command_matches: Vec<Command> = Vec::with_capacity(0);
         let subset = if self.match_depth == 0 { &self.cmd_set.commands } else { &self.command_matches };

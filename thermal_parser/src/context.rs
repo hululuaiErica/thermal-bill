@@ -1,19 +1,18 @@
 use std::collections::HashMap;
-use crate::commands::print_and_feed;
 use crate::graphics;
 
 use crate::graphics::{Image, ImageRef};
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub enum TextJustify { Left, Center, Right }
 
-#[derive(Clone, PartialEq,Debug)]
+#[derive(Clone, PartialEq)]
 pub enum TextStrikethrough { Off, On, Double }
 
-#[derive(Clone, PartialEq,Debug)]
+#[derive(Clone, PartialEq)]
 pub enum TextUnderline { Off, On, Double }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub enum Font {
     A, B, C, D, E, SpecialA, SpecialB,
 }
@@ -33,7 +32,7 @@ impl Font {
     }
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub enum HumanReadableInterface {
     None,
     Above,
@@ -41,14 +40,14 @@ pub enum HumanReadableInterface {
     Both,
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub enum Color{
     Black,
     Red
 }
 
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub struct Context {
     pub default: Option<Box<Context>>,
     pub text: TextContext,
@@ -57,7 +56,7 @@ pub struct Context {
     pub graphics: GraphicsContext,
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub struct TextContext {
     pub character_set: u8,
     pub code_table: u8,
@@ -78,7 +77,7 @@ pub struct TextContext {
     pub tab_len: u8 //character width for tabs
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub struct GraphicsContext {
     pub x: usize,
     pub y: usize,
@@ -93,7 +92,7 @@ pub struct GraphicsContext {
     pub buffer_graphics: Option<Image>,
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub struct BarcodeContext {
     pub human_readable: HumanReadableInterface,
     pub width: u8,
@@ -101,7 +100,7 @@ pub struct BarcodeContext {
     pub font: Font,
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub struct Code2DContext {
     pub symbol_storage: Option<graphics::Code2D>,
 

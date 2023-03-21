@@ -1,14 +1,11 @@
 use thermal_parser::command::{Command, CommandType, DeviceCommand};
 use thermal_parser::context::{Context, HumanReadableInterface};
 use thermal_parser::graphics::GraphicsCommand;
-
+use crate::config::{SKIP_DATA_IS_EMPTY, SKIP_CONTEXT_GRAPHRICS_Y_PLUS, SKIP_FEED};
 pub trait CommandRenderer {
     //default implementation
     fn process_command(&mut self, context: &mut Context, command: &Command) {
         //println!("{}", command.handler.debug(command, context));
-        // if command.data.is_empty(){
-        //     println!("空数据");
-        // }
         match command.kind {
             CommandType::Text => {
                 let maybe_text = command.handler.get_text(command, context);
@@ -18,7 +15,7 @@ pub trait CommandRenderer {
             }
             CommandType::Graphics => {
                 let maybe_gfx = command.handler.get_graphics(command, context);
-                //println!("maybe_gfx {:?}",maybe_gfx);
+
                 if let Some(gfx) = maybe_gfx {
                     match gfx {
                         GraphicsCommand::Code2D(code_2d) => {
@@ -74,12 +71,12 @@ pub trait CommandRenderer {
                             }
                         }
                         GraphicsCommand::Image(image) => {
-                            if command.data.is_empty()// && context.graphics.y >= image.height as usize
-                            {
-                                // println!("{}",image.height as usize);
-                                // context.graphics.y -= 30;
-
-                                return;
+                            //println!("SKIP_DATA_IS_EMPTY:{}",*SKIP_DATA_IS_EMPTY);
+                            if *SKIP_DATA_IS_EMPTY{
+                                if command.data.is_empty(){
+                                    //println!("SKIP_DATA_IS_EMPTY");
+                                    return
+                                }
                             }
                             
                             if image.advances_xy { context.graphics.x = context.graphics_x_offset(image.width) as usize; }
@@ -88,10 +85,11 @@ pub trait CommandRenderer {
                             if image.advances_xy {
                                 context.graphics.x = 0;
                                 context.graphics.y += image.height as usize;
-                                //context.graphics.y += context.line_height_pixels() as usize;
-                                //context.graphics.y -= 6;
+                                if !*SKIP_CONTEXT_GRAPHRICS_Y_PLUS{
+                                    //println!("SKIP_CONTEXT_GRAPHRICS_Y_PLUS:{}",*SKIP_CONTEXT_GRAPHRICS_Y_PLUS);
+                                    context.graphics.y += context.line_height_pixels() as usize;
+                                }
                             }
-                            
                         }
                         GraphicsCommand::Rectangle(_) => {}
                         GraphicsCommand::Line(_) => {}
@@ -125,7 +123,9 @@ pub trait CommandRenderer {
                         context.graphics.y += context.line_height_pixels() as usize * *num_lines as usize;
                     }
                     DeviceCommand::Feed(num) => {
-                        //context.graphics.y += context.motion_unit_y_pixels() as usize * *num as usize;
+                        if !*SKIP_FEED {
+                            context.graphics.y += context.motion_unit_y_pixels() as usize * *num as usize;
+                        } 
                     }
                     DeviceCommand::FullCut | DeviceCommand::PartialCut => {
                         context.graphics.y += context.line_height_pixels() as usize * 2;

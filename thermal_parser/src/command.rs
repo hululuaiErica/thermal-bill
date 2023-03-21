@@ -1,9 +1,8 @@
-use std::any::Any;
 use std::rc::Rc;
 use crate::context::Context;
 use crate::graphics::GraphicsCommand;
 
-#[derive(Clone, PartialEq,Debug)]
+#[derive(Clone, PartialEq)]
 pub enum DeviceCommand {
     BeginPrint,
     Initialize,
@@ -36,7 +35,7 @@ impl DeviceCommand {
     }
 }
 
-#[derive(Clone, PartialEq,Debug)]
+#[derive(Clone, PartialEq)]
 pub enum CommandType {
     Control,
     Text,
@@ -47,7 +46,7 @@ pub enum CommandType {
     Unknown,
 }
 
-#[derive(Clone, PartialEq,Debug)]
+#[derive(Clone, PartialEq)]
 pub enum DataType {
     Empty,
     Single,
@@ -119,7 +118,6 @@ impl Clone for Box<dyn CommandHandler> {
     }
 }
 
-
 pub trait CommandHandler: CloneCommandHandler {
     //Renders text
     fn get_text(&self, _command: &Command, _context: &Context) -> Option<String> { None }
@@ -136,7 +134,7 @@ pub trait CommandHandler: CloneCommandHandler {
     //For debugging commands
     fn debug(&self, command: &Command, _context: &Context) -> String {
         if command.data.is_empty() { return format!("{}", command.name.to_string()); }
-        format!("{}", command.name.to_string())
+        format!("{} {:02X?}", command.name.to_string(), command.data)
     }
 
     //Push data to a command. The command decides what to accept

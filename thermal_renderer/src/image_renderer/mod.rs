@@ -49,7 +49,6 @@ impl CommandRenderer for ImageRenderer {
     fn draw_image(&mut self, context: &mut Context, bytes: Vec<u8>, width: usize, height: usize){
         self.maybe_render_text(context);
         self.image.put_pixels(context.graphics.x, context.graphics.y, width, height, bytes, false, true);
-
         if context.text.upside_down { 
             self.image.flip_pixels(context.graphics.x, context.graphics.y, width, height) 
         }

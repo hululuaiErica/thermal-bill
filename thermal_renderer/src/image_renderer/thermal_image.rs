@@ -14,6 +14,8 @@ use textwrap::WordSeparator;
 
 use thermal_parser::context::{Context, TextJustify, TextStrikethrough, TextUnderline};
 
+use crate::config::SKIP_NEW_Y_PLUS_LAYOUT_LINE_HEIGHT;
+
 pub struct FontFamily {
     pub regular: fontdue::Font,
     pub bold: fontdue::Font,
@@ -122,10 +124,10 @@ impl ThermalImage {
     }
 
     pub fn draw_text(&mut self, x: usize, y: usize, width: usize, layout: &mut TextLayout) -> (usize, usize) {
-
         let mut temp_x = 0;
         let newline = Vec::<(&TextSpan, String, usize)>::new();
         let mut lines = vec![newline.clone()];
+
         for span in &mut layout.spans {
             let char_width = span.char_width();
             let words = WordSeparator::UnicodeBreakProperties.find_words(span.text.as_str());
@@ -175,6 +177,7 @@ impl ThermalImage {
                 }
             }
         }
+
         let mut new_x = x;
         let mut new_y = y;
 
@@ -206,12 +209,15 @@ impl ThermalImage {
                 new_x += w;
             }
             new_x = x;
-            //new_y += layout.line_height as usize
+            if !*SKIP_NEW_Y_PLUS_LAYOUT_LINE_HEIGHT{
+                new_y += layout.line_height as usize
+            }
             
         }
+
         (new_x, new_y)
     }
-
+    
     pub fn render_word(&mut self, x: usize, y: usize, text: &str, span: &TextSpan) -> (usize, usize){
         let font = span.get_font();
         let font_size = span.size as f32;
@@ -301,13 +307,14 @@ impl ThermalImage {
         }
 
         sub_image.reverse();
-        self.put_pixels(x,y,width,height,sub_image, false, false);
 
+        self.put_pixels(x,y,width,height,sub_image, false, false);
     }
 
     pub fn put_pixels(&mut self, x: usize, y: usize, width: usize, height: usize, pixels: Vec<u8>, invert: bool, multiply: bool) -> bool{
         let mut cur_x = x;
         let mut cur_y = y;
+
         if x + width > self.width {
             return false
         };
@@ -380,8 +387,8 @@ impl ThermalImage {
             println!("Nothing to save!");
             return;
         }
-        let path = Path::new(&filepath);
-        let file = File::create("./ori.png").unwrap();
+        //let path = Path::new(&filepath);
+        let file = File::create("ori.png").unwrap();
         let ref mut w = BufWriter::new(file);
         let mut encoder = png::Encoder::new(w, self.width as u32, self.bytes.len() as u32 / self.width as u32);
         encoder.set_color(png::ColorType::Grayscale);

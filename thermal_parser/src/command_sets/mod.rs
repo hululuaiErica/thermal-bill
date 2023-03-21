@@ -1,6 +1,5 @@
 use crate::{command::*};
 
-
 pub struct CommandSet {
     //list of supported commands
     pub commands: Box<Vec<Command>>,

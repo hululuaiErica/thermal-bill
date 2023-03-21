@@ -1,6 +1,6 @@
 use crate::context::HumanReadableInterface;
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub struct Barcode {
     pub points: Vec<u8>,
     pub point_width: u8,
@@ -9,7 +9,7 @@ pub struct Barcode {
     pub text: String,
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub struct Rectangle {
     _x: u32,
     _y: u32,
@@ -17,7 +17,7 @@ pub struct Rectangle {
     _height: u32,
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub struct Line {
     _ax: u32,
     _ay: u32,
@@ -25,7 +25,7 @@ pub struct Line {
     _by: u32,
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub struct Code2D {
     pub points: Vec<u8>,
     pub width: u32,
@@ -33,7 +33,7 @@ pub struct Code2D {
     pub point_height: u32,
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub enum PixelType {
     Monochrome(u8),
     //1 bit per pixel one color, the u8 selects the color (1 - 4)
@@ -42,7 +42,7 @@ pub enum PixelType {
     Unknown,
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone)]
 pub struct Image {
     pub pixels: Vec<u8>,
     pub width: u32,
@@ -108,6 +108,7 @@ impl Image {
         let y2 = *data.get(7).unwrap();
         let width = x1 as u32 + x2 as u32 * 256;
         let height = y1 as u32 + y2 as u32 * 256;
+
         let pixel_type = match a {
             48 => PixelType::Monochrome(c),
             52 => PixelType::MultipleTone(c, 1),
@@ -123,6 +124,7 @@ impl Image {
 
     pub fn from_raster_data_with_ref(data: &Vec<u8>, storage: ImageRefStorage) -> Option<(ImageRef, Image)> {
         if data.len() < 8 { return None; };
+
         let a = *data.get(0).unwrap();
         let kc1 = *data.get(1).unwrap();
         let kc2 = *data.get(2).unwrap();
@@ -210,7 +212,7 @@ impl Image {
 
 //Images that were added to storage can be
 //referenced with an ImageRef
-#[derive(Clone, PartialEq, Eq, Hash,Debug)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct ImageRef {
     pub kc1: u8,
     pub kc2: u8,
@@ -228,13 +230,12 @@ impl ImageRef {
     }
 }
 
-#[derive(Clone, PartialEq, Eq, Hash,Debug)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub enum ImageRefStorage {
     Disc,
     Ram,
 }
 
-#[derive(Debug)]
 pub enum GraphicsCommand {
     Code2D(Code2D),
     Barcode(Barcode),
